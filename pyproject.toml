@@ -1,0 +1,96 @@
+[build-system]
+requires = ["uv_build>=0.9.4,<0.10.0"]
+build-backend = "uv_build"
+
+[project]
+name = "zurich-uhi-lur"
+version = "0.1.0"
+description = "Land use regression of urban heat islands in Zurich using low-cost devices."
+authors = [{name = "Martí Bosch", email = "marti.bosch@unibe.ch"}]
+readme = "README.md"
+license = {text = "GPL-3.0-only"}
+classifiers = [
+  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14"
+]
+requires-python = ">=3.10"
+dependencies = ["detectree>=0.9.1,<0.10", "urban-footprinter>=0.4.0,<0.5"]
+
+[project.urls]
+repository = "https://github.com/martibosch/zurich-uhi-lur"
+
+[tool.codespell]
+# ignore generated Jupyter notebook outputs while still checking notebook source
+ignore-multiline-regex = '"outputs":\s*\[(?s:.*?)\](?=,\s*"source":\s*\[)'
+skip = "pixi.lock"
+
+[tool.mdformat]
+number = true
+
+[tool.pixi.dependencies]
+contextily = ">=1.7.0,<2"
+flaml = "2.4.1.*"
+geopandas = ">=1.1.2,<2"
+ipykernel = ">=7.1.0,<8"
+interpret = ">=0.7.0,<0.8"
+matplotlib = ">=3.10.7,<4"
+meteora = ">=0.12.0,<0.13"
+numpy = ">=2.3.3,<3"
+osmnx = ">=2.0.6,<3"
+papermill = ">=2.6.0,<3"
+pandas = ">=2.3.2,<3"
+pixi-kernel = ">=0.7.1,<0.8"
+pyarrow = ">=21.0.0,<22"
+pyregeon = ">=0.1.1,<0.2"
+scikit-learn = ">=1.7.2,<2"
+seaborn = ">=0.13.2,<0.14"
+shap = ">=0.50.0,<0.51"
+skops = ">=0.13.0,<0.14"
+snakemake = ">=9.16.3,<10"
+xarray = ">=2025.12.0,<2026"
+pre-commit = ">=4.4.0,<5"
+python = "==3.13"
+pdal = ">=2.9.3,<3"
+python-pdal = ">=3.5.3,<4"
+swisslandstats-geopy = ">=0.12.0,<0.13"
+xgboost = ">=3.2.0,<4"
+
+[tool.pixi.pypi-dependencies]
+focalpy = {path = "focalpy", editable = true}
+# swisstopopy = ">=0.1.0,<0.2"
+swisstopopy = {path = "../../libraries/swisstopopy", editable = true}
+zurich_uhi_lur = {path = ".", editable = true}
+
+[tool.pixi.workspace]
+authors = ["Martí Bosch marti.bosch@unibe.ch>"]
+channels = ["conda-forge", "bioconda"]
+name = "zurich-uhi-lur"
+platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
+version = "0.1.0"
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = ["D", "E", "F", "I"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["zurich_uhi_lur"]
+
+[tool.ruff.lint.per-file-ignores]
+"*.ipynb" = ["D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.uv.build-backend]
+module-name = "zurich_uhi_lur"
+module-root = ""
