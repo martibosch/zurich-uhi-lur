@@ -3,7 +3,7 @@
 # Land use regression of urban heat in Zurich
 
 Land use regression of Zurich heatwaves using automated weather stations (AWS) and
-low-cost devices (LCD).
+low-cost sensors (LCS).
 
 ## Requirements
 
@@ -45,8 +45,8 @@ git commit -m "feat: initial commit"
 pixi run snakemake -j1
 ```
 
-The pipeline prepares AWS and UGZ LCD heatwave datasets, computes land features, and
-finishes with the `land-use-regression` and `lur-postprocessing` notebooks.
+The pipeline prepares AWS and UGZ LCS heatwave datasets, computes land features, and
+finishes with the `lur-model` and `lur-results` notebooks.
 
 _Optional_: if you are using GitHub, you can set up [pre-commit.ci](https://pre-commit.ci) as a continuous integration service for pre-commit.
 

@@ -13,8 +13,8 @@ DATA_PROCESSED_DIR = DATA_DIR / "processed"
 MODELS_DIR = Path("models")
 FIGURES_DIR = Path("reports") / "figures"
 
-EXTENT_FILEPATH = DATA_PROCESSED_DIR / "zurich-lcd-extent.gpkg"
-LCD_BUFFER_DIST = 2000
+EXTENT_FILEPATH = DATA_PROCESSED_DIR / "zurich-lcs-extent.gpkg"
+LCS_BUFFER_DIST = 2000
 BUFFER_DISTS_FILEPATH = DATA_RAW_DIR / "buffer-dists.yml"
 LAND_WORKING_DIR = NOTEBOOKS_DIR / "land-working-dir"
 DST_RES = 100
@@ -53,6 +53,7 @@ rule all:
         FIGURES_DIR / "lur-scores.pdf",
         FIGURES_DIR / "lur-rsa.pdf",
         FIGURES_DIR / "lur-maps.png",
+        FIGURES_DIR / "lur-maps-std.png",
         FIGURES_DIR / "lur-pca.pdf",
         FIGURES_DIR / "lur-pca-loadings.pdf",
         FIGURES_DIR / "lur-obs-pred.pdf",
@@ -83,18 +84,18 @@ rule aws_data:
         "-p dst_stations_gdf_filepath {output.stations_gdf}"
 
 
-rule lcd_data:
+rule lcs_data:
     input:
         aws_ts_df=rules.aws_data.output.ts_df,
         ugz_stations=DATA_RAW_DIR
         / "ugz_stadtklima_zuerich_messorte_messnetz_meteoblue.csv",
         ugz_ts_parquet=DATA_RAW_DIR
         / "ugz_stadtklima_zuerich_temperaturmessungen_messnetz_meteoblue_2019-aktuell.parquet",
-        notebook=NOTEBOOKS_DIR / "lcd-data.ipynb",
+        notebook=NOTEBOOKS_DIR / "lcs-data.ipynb",
     output:
-        ts_df=DATA_INTERIM_DIR / "lcd-ts-df.csv",
-        stations_gdf=DATA_INTERIM_DIR / "lcd-stations.gpkg",
-        notebook=NOTEBOOKS_OUTPUT_DIR / "lcd-data.ipynb",
+        ts_df=DATA_INTERIM_DIR / "lcs-ts-df.csv",
+        stations_gdf=DATA_INTERIM_DIR / "lcs-stations.gpkg",
+        notebook=NOTEBOOKS_OUTPUT_DIR / "lcs-data.ipynb",
     shell:
         "papermill {input.notebook} {output.notebook} "
         "-p aws_ts_df_filepath {input.aws_ts_df} "
@@ -104,26 +105,26 @@ rule lcd_data:
         "-p dst_stations_gdf_filepath {output.stations_gdf}"
 
 
-rule lcd_spatial_extent:
+rule lcs_spatial_extent:
     input:
-        lcd_stations_gdf=rules.lcd_data.output.stations_gdf,
-        notebook=NOTEBOOKS_DIR / "lcd-spatial-extent.ipynb",
+        lcs_stations_gdf=rules.lcs_data.output.stations_gdf,
+        notebook=NOTEBOOKS_DIR / "lcs-spatial-extent.ipynb",
     output:
         extent=EXTENT_FILEPATH,
-        notebook=NOTEBOOKS_OUTPUT_DIR / "lcd-spatial-extent.ipynb",
+        notebook=NOTEBOOKS_OUTPUT_DIR / "lcs-spatial-extent.ipynb",
     shell:
         "papermill {input.notebook} {output.notebook} "
-        "-p lcd_stations_gdf_filepath {input.lcd_stations_gdf} "
-        "-p buffer_dist {LCD_BUFFER_DIST} "
+        "-p lcs_stations_gdf_filepath {input.lcs_stations_gdf} "
+        "-p buffer_dist {LCS_BUFFER_DIST} "
         "-p dst_filepath {output.extent}"
 
 
-rule merge_aws_lcd_data:
+rule merge_aws_lcs_data:
     input:
         aws_ts_df=rules.aws_data.output.ts_df,
-        lcd_ts_df=rules.lcd_data.output.ts_df,
+        lcs_ts_df=rules.lcs_data.output.ts_df,
         aws_stations_gdf=rules.aws_data.output.stations_gdf,
-        lcd_stations_gdf=rules.lcd_data.output.stations_gdf,
+        lcs_stations_gdf=rules.lcs_data.output.stations_gdf,
         notebook=NOTEBOOKS_DIR / "station-data.ipynb",
     output:
         ts_df=DATA_PROCESSED_DIR / "ts-df.csv",
@@ -132,18 +133,18 @@ rule merge_aws_lcd_data:
     shell:
         "papermill {input.notebook} {output.notebook} "
         "-p aws_ts_df_filepath {input.aws_ts_df} "
-        "-p lcd_ts_df_filepath {input.lcd_ts_df} "
+        "-p lcs_ts_df_filepath {input.lcs_ts_df} "
         "-p aws_stations_gdf_filepath {input.aws_stations_gdf} "
-        "-p lcd_stations_gdf_filepath {input.lcd_stations_gdf} "
+        "-p lcs_stations_gdf_filepath {input.lcs_stations_gdf} "
         "-p dst_ts_df_filepath {output.ts_df} "
         "-p dst_stations_gdf_filepath {output.stations_gdf}"
 
 
 rule eda:
     input:
-        extent=rules.lcd_spatial_extent.output.extent,
-        stations_gdf=rules.merge_aws_lcd_data.output.stations_gdf,
-        ts_df=rules.merge_aws_lcd_data.output.ts_df,
+        extent=rules.lcs_spatial_extent.output.extent,
+        stations_gdf=rules.merge_aws_lcs_data.output.stations_gdf,
+        ts_df=rules.merge_aws_lcs_data.output.ts_df,
         notebook=NOTEBOOKS_DIR / "eda.ipynb",
     output:
         t_ts=FIGURES_DIR / "t-ts.pdf",
@@ -162,7 +163,7 @@ rule eda:
 
 rule land_data:
     input:
-        extent=rules.lcd_spatial_extent.output.extent,
+        extent=rules.lcs_spatial_extent.output.extent,
         notebook=NOTEBOOKS_DIR / "land-data.ipynb",
     output:
         buildings=DATA_PROCESSED_DIR / "buildings.gpkg",
@@ -180,7 +181,7 @@ rule land_data:
 
 rule regular_grid:
     input:
-        extent=rules.lcd_spatial_extent.output.extent,
+        extent=rules.lcs_spatial_extent.output.extent,
         notebook=NOTEBOOKS_DIR / "prediction-grid.ipynb",
     output:
         regular_grid=DATA_PROCESSED_DIR / "regular-grid.gpkg",
@@ -194,7 +195,7 @@ rule regular_grid:
 
 rule _compute_land_features:
     input:
-        extent=rules.lcd_spatial_extent.output.extent,
+        extent=rules.lcs_spatial_extent.output.extent,
         sites=lambda wc: SITES_GDF_DICT[wc.sites],
         buildings=rules.land_data.output.buildings,
         dem=rules.land_data.output.dem,
@@ -224,10 +225,12 @@ rule compute_land_features:
 
 rule land_use_regression:
     input:
-        stations_gdf=rules.merge_aws_lcd_data.output.stations_gdf,
+        stations_gdf=rules.merge_aws_lcs_data.output.stations_gdf,
         station_features=DATA_PROCESSED_DIR / "stations-features.csv",
-        ts_df=rules.merge_aws_lcd_data.output.ts_df,
-        notebook=NOTEBOOKS_DIR / "lur-fit.ipynb",
+        ts_df=rules.merge_aws_lcs_data.output.ts_df,
+        grid_gdf=rules.regular_grid.output.regular_grid,
+        grid_features=DATA_PROCESSED_DIR / "grid-features.csv",
+        notebook=NOTEBOOKS_DIR / "lur-model.ipynb",
     output:
         pipeline_ols=MODELS_DIR / "pipeline-OLS.skops",
         pipeline_rf=MODELS_DIR / "pipeline-RF.skops",
@@ -235,30 +238,35 @@ rule land_use_regression:
         importance=DATA_PROCESSED_DIR / "lur-importance.csv",
         obs_pred=DATA_PROCESSED_DIR / "lur-obs-pred.csv",
         baseline_moran=DATA_PROCESSED_DIR / "baseline-moran.json",
-        notebook=NOTEBOOKS_OUTPUT_DIR / "lur-fit.ipynb",
+        grid_pred=DATA_PROCESSED_DIR / "lur-grid-pred.nc",
+        notebook=NOTEBOOKS_OUTPUT_DIR / "lur-model.ipynb",
     shell:
         "papermill {input.notebook} {output.notebook} "
         "-p stations_gdf_filepath {input.stations_gdf} "
         "-p station_features_filepath {input.station_features} "
         "-p ts_df_filepath {input.ts_df} "
+        "-p grid_gdf_filepath {input.grid_gdf} "
+        "-p grid_features_filepath {input.grid_features} "
         "-p models_dir {MODELS_DIR} "
         "-p dst_results_filepath {output.results} "
         "-p dst_importance_filepath {output.importance} "
         "-p dst_obs_pred_filepath {output.obs_pred} "
-        "-p dst_baseline_moran_filepath {output.baseline_moran}"
+        "-p dst_baseline_moran_filepath {output.baseline_moran} "
+        "-p dst_grid_pred_filepath {output.grid_pred}"
 
 
 rule lur_results:
     input:
-        stations_gdf=rules.merge_aws_lcd_data.output.stations_gdf,
+        stations_gdf=rules.merge_aws_lcs_data.output.stations_gdf,
         station_features=DATA_PROCESSED_DIR / "stations-features.csv",
-        ts_df=rules.merge_aws_lcd_data.output.ts_df,
+        ts_df=rules.merge_aws_lcs_data.output.ts_df,
         grid_gdf=rules.regular_grid.output.regular_grid,
         grid_features=DATA_PROCESSED_DIR / "grid-features.csv",
         results=rules.land_use_regression.output.results,
         importance=rules.land_use_regression.output.importance,
         obs_pred_data=rules.land_use_regression.output.obs_pred,
         baseline_moran=rules.land_use_regression.output.baseline_moran,
+        grid_pred=rules.land_use_regression.output.grid_pred,
         notebook=NOTEBOOKS_DIR / "lur-results.ipynb",
     output:
         scores_fig=FIGURES_DIR / "lur-scores.pdf",
@@ -270,6 +278,7 @@ rule lur_results:
         importance_single_ebm=FIGURES_DIR / "lur-importance-single-EBM.pdf",
         importance_single_rf=FIGURES_DIR / "lur-importance-single-RF.pdf",
         maps_fig=FIGURES_DIR / "lur-maps.png",
+        maps_std_fig=FIGURES_DIR / "lur-maps-std.png",
         pca_fig=FIGURES_DIR / "lur-pca.pdf",
         pca_loadings_fig=FIGURES_DIR / "lur-pca-loadings.pdf",
         obs_pred_fig=FIGURES_DIR / "lur-obs-pred.pdf",
@@ -286,10 +295,12 @@ rule lur_results:
         "-p dst_importance_filepath {input.importance} "
         "-p obs_pred_data_filepath {input.obs_pred_data} "
         "-p dst_baseline_moran_filepath {input.baseline_moran} "
+        "-p grid_pred_filepath {input.grid_pred} "
         "-p dst_scores_filepath {output.scores_fig} "
         "-p dst_rsa_filepath {output.rsa_fig} "
         "-p dst_importance_fig_prefix {FIGURES_DIR}/lur-importance "
         "-p dst_maps_filepath {output.maps_fig} "
+        "-p dst_maps_std_filepath {output.maps_std_fig} "
         "-p dst_pca_filepath {output.pca_fig} "
         "-p dst_pca_loadings_filepath {output.pca_loadings_fig} "
         "-p dst_obs_pred_filepath {output.obs_pred_fig}"

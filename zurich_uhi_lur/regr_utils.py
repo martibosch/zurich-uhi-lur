@@ -3,6 +3,7 @@
 import geopandas as gpd
 import numpy as np
 import pandas as pd
+from focalpy.diagnostics import moran_residuals
 from pandas.api import types as pd_types
 from scipy import stats
 from sklearn import base as sk_base
@@ -147,8 +148,6 @@ def score_pipeline(
         result["y_pred_cv"] = y_pred_cv
 
     if station_gser is not None:
-        from focalpy.diagnostics import moran_residuals
-
         resid = y.values - (result["y_pred_cv"] if cv is not None else y_pred)
 
         w = spatial_weights if spatial_weights is not None else station_gser
@@ -162,6 +161,7 @@ def score_pipeline(
         )
         result["moran_I"] = rsa["I"]
         result["moran_p_sim"] = rsa["p_sim"]
+        result["resid"] = resid
 
     if importance_fn is not None:
         result["importances"] = importance_fn(pipe, X, selected)
