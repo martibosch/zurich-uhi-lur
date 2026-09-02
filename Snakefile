@@ -10,7 +10,6 @@ DATA_RAW_DIR = DATA_DIR / "raw"
 DATA_INTERIM_DIR = DATA_DIR / "interim"
 DATA_PROCESSED_DIR = DATA_DIR / "processed"
 
-MODELS_DIR = Path("models")
 FIGURES_DIR = Path("reports") / "figures"
 
 EXTENT_FILEPATH = DATA_PROCESSED_DIR / "zurich-lcs-extent.gpkg"
@@ -40,8 +39,6 @@ rule all:
             str(DATA_PROCESSED_DIR / "{sites}-features.csv"),
             sites=["stations", "grid"],
         ),
-        MODELS_DIR / "pipeline-OLS.skops",
-        MODELS_DIR / "pipeline-RF.skops",
         expand(
             str(FIGURES_DIR / "lur-importance-{model}.pdf"),
             model=["OLS", "EBM", "RF"],
@@ -232,8 +229,6 @@ rule land_use_regression:
         grid_features=DATA_PROCESSED_DIR / "grid-features.csv",
         notebook=NOTEBOOKS_DIR / "lur-model.ipynb",
     output:
-        pipeline_ols=MODELS_DIR / "pipeline-OLS.skops",
-        pipeline_rf=MODELS_DIR / "pipeline-RF.skops",
         results=DATA_PROCESSED_DIR / "lur-results.csv",
         importance=DATA_PROCESSED_DIR / "lur-importance.csv",
         obs_pred=DATA_PROCESSED_DIR / "lur-obs-pred.csv",
@@ -247,7 +242,6 @@ rule land_use_regression:
         "-p ts_df_filepath {input.ts_df} "
         "-p grid_gdf_filepath {input.grid_gdf} "
         "-p grid_features_filepath {input.grid_features} "
-        "-p models_dir {MODELS_DIR} "
         "-p dst_results_filepath {output.results} "
         "-p dst_importance_filepath {output.importance} "
         "-p dst_obs_pred_filepath {output.obs_pred} "
@@ -290,7 +284,6 @@ rule lur_results:
         "-p ts_df_filepath {input.ts_df} "
         "-p grid_gdf_filepath {input.grid_gdf} "
         "-p grid_features_filepath {input.grid_features} "
-        "-p models_dir {MODELS_DIR} "
         "-p dst_results_filepath {input.results} "
         "-p dst_importance_filepath {input.importance} "
         "-p obs_pred_data_filepath {input.obs_pred_data} "
