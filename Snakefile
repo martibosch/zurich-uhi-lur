@@ -24,9 +24,6 @@ SITES_GDF_DICT = {
 }
 
 
-METEOSWISS_STATIONS = ["KLO", "REH", "SMA"]
-
-
 rule all:
     input:
         DATA_PROCESSED_DIR / "ts-df.csv",
@@ -50,18 +47,11 @@ rule all:
         FIGURES_DIR / "lur-scores.pdf",
         FIGURES_DIR / "lur-rsa.pdf",
         FIGURES_DIR / "lur-maps.png",
-        FIGURES_DIR / "lur-maps-std.png",
         FIGURES_DIR / "lur-pca.pdf",
         FIGURES_DIR / "lur-pca-loadings.pdf",
-        FIGURES_DIR / "lur-obs-pred.pdf",
         FIGURES_DIR / "t-ts.pdf",
         FIGURES_DIR / "station-t-mean-maps.png",
         FIGURES_DIR / "station-t-t-mean-maps.png",
-        DATA_PROCESSED_DIR / "aws-day-clusters.json",
-        expand(
-            str(DATA_PROCESSED_DIR / "aws-day-clusters-{station_id}.json"),
-            station_id=METEOSWISS_STATIONS,
-        ),
 
 
 rule aws_data:
@@ -272,10 +262,8 @@ rule lur_results:
         importance_single_ebm=FIGURES_DIR / "lur-importance-single-EBM.pdf",
         importance_single_rf=FIGURES_DIR / "lur-importance-single-RF.pdf",
         maps_fig=FIGURES_DIR / "lur-maps.png",
-        maps_std_fig=FIGURES_DIR / "lur-maps-std.png",
         pca_fig=FIGURES_DIR / "lur-pca.pdf",
         pca_loadings_fig=FIGURES_DIR / "lur-pca-loadings.pdf",
-        obs_pred_fig=FIGURES_DIR / "lur-obs-pred.pdf",
         notebook=NOTEBOOKS_OUTPUT_DIR / "lur-results.ipynb",
     shell:
         "papermill {input.notebook} {output.notebook} "
@@ -293,7 +281,5 @@ rule lur_results:
         "-p dst_rsa_filepath {output.rsa_fig} "
         "-p dst_importance_fig_prefix {FIGURES_DIR}/lur-importance "
         "-p dst_maps_filepath {output.maps_fig} "
-        "-p dst_maps_std_filepath {output.maps_std_fig} "
         "-p dst_pca_filepath {output.pca_fig} "
         "-p dst_pca_loadings_filepath {output.pca_loadings_fig} "
-        "-p dst_obs_pred_filepath {output.obs_pred_fig}"
