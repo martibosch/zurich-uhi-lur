@@ -38,13 +38,14 @@ rule all:
         ),
         expand(
             str(FIGURES_DIR / "lur-importance-{model}.pdf"),
-            model=["OLS", "EBM", "RF"],
+            model=["OLS", "GAM", "RF"],
         ),
         expand(
             str(FIGURES_DIR / "lur-importance-single-{model}.pdf"),
-            model=["OLS", "EBM", "RF"],
+            model=["OLS", "GAM", "RF"],
         ),
-        FIGURES_DIR / "lur-scores.pdf",
+        FIGURES_DIR / "lur-scores-performance.pdf",
+        FIGURES_DIR / "lur-scores-rsa.pdf",
         FIGURES_DIR / "lur-rsa.pdf",
         FIGURES_DIR / "lur-maps.png",
         FIGURES_DIR / "lur-pca.pdf",
@@ -222,6 +223,7 @@ rule land_use_regression:
         results=DATA_PROCESSED_DIR / "lur-results.csv",
         importance=DATA_PROCESSED_DIR / "lur-importance.csv",
         obs_pred=DATA_PROCESSED_DIR / "lur-obs-pred.csv",
+        shap=DATA_PROCESSED_DIR / "lur-shap.csv",
         baseline_moran=DATA_PROCESSED_DIR / "baseline-moran.json",
         grid_pred=DATA_PROCESSED_DIR / "lur-grid-pred.nc",
         notebook=NOTEBOOKS_OUTPUT_DIR / "lur-model.ipynb",
@@ -235,6 +237,7 @@ rule land_use_regression:
         "-p dst_results_filepath {output.results} "
         "-p dst_importance_filepath {output.importance} "
         "-p dst_obs_pred_filepath {output.obs_pred} "
+        "-p dst_shap_filepath {output.shap} "
         "-p dst_baseline_moran_filepath {output.baseline_moran} "
         "-p dst_grid_pred_filepath {output.grid_pred}"
 
@@ -249,17 +252,19 @@ rule lur_results:
         results=rules.land_use_regression.output.results,
         importance=rules.land_use_regression.output.importance,
         obs_pred_data=rules.land_use_regression.output.obs_pred,
+        shap=rules.land_use_regression.output.shap,
         baseline_moran=rules.land_use_regression.output.baseline_moran,
         grid_pred=rules.land_use_regression.output.grid_pred,
         notebook=NOTEBOOKS_DIR / "lur-results.ipynb",
     output:
-        scores_fig=FIGURES_DIR / "lur-scores.pdf",
+        scores_performance_fig=FIGURES_DIR / "lur-scores-performance.pdf",
+        scores_rsa_fig=FIGURES_DIR / "lur-scores-rsa.pdf",
         rsa_fig=FIGURES_DIR / "lur-rsa.pdf",
         importance_ols=FIGURES_DIR / "lur-importance-OLS.pdf",
-        importance_ebm=FIGURES_DIR / "lur-importance-EBM.pdf",
+        importance_gam=FIGURES_DIR / "lur-importance-GAM.pdf",
         importance_rf=FIGURES_DIR / "lur-importance-RF.pdf",
         importance_single_ols=FIGURES_DIR / "lur-importance-single-OLS.pdf",
-        importance_single_ebm=FIGURES_DIR / "lur-importance-single-EBM.pdf",
+        importance_single_gam=FIGURES_DIR / "lur-importance-single-GAM.pdf",
         importance_single_rf=FIGURES_DIR / "lur-importance-single-RF.pdf",
         maps_fig=FIGURES_DIR / "lur-maps.png",
         pca_fig=FIGURES_DIR / "lur-pca.pdf",
@@ -275,9 +280,11 @@ rule lur_results:
         "-p dst_results_filepath {input.results} "
         "-p dst_importance_filepath {input.importance} "
         "-p obs_pred_data_filepath {input.obs_pred_data} "
+        "-p dst_shap_filepath {input.shap} "
         "-p dst_baseline_moran_filepath {input.baseline_moran} "
         "-p grid_pred_filepath {input.grid_pred} "
-        "-p dst_scores_filepath {output.scores_fig} "
+        "-p dst_scores_performance_filepath {output.scores_performance_fig} "
+        "-p dst_scores_rsa_filepath {output.scores_rsa_fig} "
         "-p dst_rsa_filepath {output.rsa_fig} "
         "-p dst_importance_fig_prefix {FIGURES_DIR}/lur-importance "
         "-p dst_maps_filepath {output.maps_fig} "
