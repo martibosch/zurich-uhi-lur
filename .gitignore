@@ -104,3 +104,11 @@ ENV/
 .pixi/*
 !.pixi/config.toml
 /.agent-shell/
+
+# paper, executed notebooks and local caches
+reports/
+cache/
+notebooks/output/
+notebooks/cache/
+models/
+*.sqlite
