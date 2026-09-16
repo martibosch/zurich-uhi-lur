@@ -44,6 +44,8 @@ rule all:
             str(FIGURES_DIR / "lur-importance-single-{model}.pdf"),
             model=["MLR", "GAM", "RF"],
         ),
+        FIGURES_DIR / "lur-importance-heatmap.pdf",
+        FIGURES_DIR / "lur-importance-headline.pdf",
         FIGURES_DIR / "lur-scores-performance.pdf",
         FIGURES_DIR / "lur-scores-rsa.pdf",
         FIGURES_DIR / "lur-rsa.pdf",
@@ -290,3 +292,20 @@ rule lur_results:
         "-p dst_maps_filepath {output.maps_fig} "
         "-p dst_pca_filepath {output.pca_fig} "
         "-p dst_pca_loadings_filepath {output.pca_loadings_fig} "
+
+
+rule lur_importance_figures:
+    input:
+        importance=rules.land_use_regression.output.importance,
+        shap=rules.land_use_regression.output.shap,
+        notebook=NOTEBOOKS_DIR / "lur-importance-figures.ipynb",
+    output:
+        heatmap_fig=FIGURES_DIR / "lur-importance-heatmap.pdf",
+        headline_fig=FIGURES_DIR / "lur-importance-headline.pdf",
+        notebook=NOTEBOOKS_OUTPUT_DIR / "lur-importance-figures.ipynb",
+    shell:
+        "papermill {input.notebook} {output.notebook} "
+        "-p dst_importance_filepath {input.importance} "
+        "-p dst_shap_filepath {input.shap} "
+        "-p dst_importance_heatmap_filepath {output.heatmap_fig} "
+        "-p dst_importance_headline_filepath {output.headline_fig}"
