@@ -13,67 +13,6 @@ from sklearn.model_selection import cross_val_predict
 from sklearn.utils.validation import check_is_fitted, validate_data
 
 
-class SpearmanSFSSelector(feature_selection.SelectorMixin, sk_base.BaseEstimator):
-    """Sequential forward selector: Spearman ordering + condition number stopping.
-
-    Features are ranked by absolute Spearman correlation with ``y`` and added
-    greedily. A candidate feature is skipped if adding it would push the
-    condition number of the current feature matrix above ``condition_threshold``.
-
-    Parameters
-    ----------
-    condition_threshold : float, default=30.0
-        Maximum allowed condition number.
-
-    Attributes
-    ----------
-    support_mask_ : ndarray of shape (n_features,)
-        Boolean mask of selected features.
-    selected_features_ : ndarray of str
-        Names of the selected features.
-    spearman_values_ : ndarray of shape (n_features,)
-        Absolute Spearman correlation of each original feature with ``y``.
-    """
-
-    def __init__(self, condition_threshold=30.0):
-        self.condition_threshold = condition_threshold
-
-    def fit(self, X, y):
-        """Fit feature selector."""
-        X = validate_data(self, X, dtype="numeric")
-        y = np.asarray(y)
-
-        cols = (
-            list(self.feature_names_in_)
-            if hasattr(self, "feature_names_in_")
-            else [str(i) for i in range(X.shape[1])]
-        )
-
-        spearman_vals = np.array(
-            [abs(stats.spearmanr(X[:, i], y).statistic) for i in range(X.shape[1])]
-        )
-        spearman_vals = np.nan_to_num(spearman_vals, nan=0.0)
-        rank_order = np.argsort(-spearman_vals)
-
-        selected = []
-        for i in rank_order:
-            candidate = selected + [i]
-            cond = np.linalg.cond(X[:, candidate])
-            if cond <= self.condition_threshold:
-                selected.append(i)
-
-        mask = np.zeros(X.shape[1], dtype=bool)
-        mask[selected] = True
-        self.support_mask_ = mask
-        self.selected_features_ = np.array([cols[i] for i in selected])
-        self.spearman_values_ = spearman_vals
-        return self
-
-    def _get_support_mask(self):
-        check_is_fitted(self, "support_mask_")
-        return self.support_mask_
-
-
 def _vif_given(X, selected, candidate):
     """Variance inflation factor of `candidate` regressed on the `selected` columns."""
     if not selected:

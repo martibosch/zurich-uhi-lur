@@ -44,10 +44,8 @@ rule all:
         FIGURES_DIR / "lur-maps.png",
         FIGURES_DIR / "lur-pca.pdf",
         FIGURES_DIR / "lur-pca-loadings.pdf",
-        FIGURES_DIR / "t-ts.pdf",
         FIGURES_DIR / "lur-pred-spread.pdf",
         FIGURES_DIR / "station-t-mean-maps.png",
-        FIGURES_DIR / "station-t-t-mean-maps.png",
 
 
 rule aws_data:
@@ -152,18 +150,14 @@ rule eda:
         ts_df=rules.merge_aws_lcs_data.output.ts_df,
         notebook=NOTEBOOKS_DIR / "eda.ipynb",
     output:
-        t_ts=FIGURES_DIR / "t-ts.pdf",
         t_mean_maps=FIGURES_DIR / "station-t-mean-maps.png",
-        t_minus_mean_maps=FIGURES_DIR / "station-t-t-mean-maps.png",
         notebook=NOTEBOOKS_OUTPUT_DIR / "eda.ipynb",
     shell:
         "papermill {input.notebook} {output.notebook} "
         "-p agglom_extent_filepath {input.extent} "
         "-p stations_gdf_filepath {input.stations_gdf} "
         "-p ts_df_filepath {input.ts_df} "
-        "-p dst_t_ts_filepath {output.t_ts} "
-        "-p dst_t_mean_maps_filepath {output.t_mean_maps} "
-        "-p dst_t_minus_mean_maps_filepath {output.t_minus_mean_maps}"
+        "-p dst_t_mean_maps_filepath {output.t_mean_maps}"
 
 
 rule land_data:
