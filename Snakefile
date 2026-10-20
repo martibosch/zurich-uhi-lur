@@ -36,6 +36,7 @@ rule all:
             str(DATA_PROCESSED_DIR / "{sites}-features.csv"),
             sites=["stations", "grid"],
         ),
+        DATA_PROCESSED_DIR / "lur-nfour-control.csv",
         FIGURES_DIR / "lur-importance-heatmap.pdf",
         FIGURES_DIR / "lur-importance-headline.pdf",
         FIGURES_DIR / "lur-scores-performance.pdf",
@@ -282,6 +283,23 @@ rule lur_results:
         "-p dst_pca_filepath {output.pca_fig} "
         "-p dst_pca_loadings_filepath {output.pca_loadings_fig} "
         "-p dst_pred_spread_filepath {output.pred_spread_fig} "
+
+
+rule nfour_control:
+    input:
+        stations_gdf=rules.merge_aws_lcs_data.output.stations_gdf,
+        station_features=DATA_PROCESSED_DIR / "stations-features.csv",
+        ts_df=rules.merge_aws_lcs_data.output.ts_df,
+        notebook=NOTEBOOKS_DIR / "lur-nfour-control.ipynb",
+    output:
+        control=DATA_PROCESSED_DIR / "lur-nfour-control.csv",
+        notebook=NOTEBOOKS_OUTPUT_DIR / "lur-nfour-control.ipynb",
+    shell:
+        "papermill {input.notebook} {output.notebook} "
+        "-p stations_gdf_filepath {input.stations_gdf} "
+        "-p station_features_filepath {input.station_features} "
+        "-p ts_df_filepath {input.ts_df} "
+        "-p dst_control_filepath {output.control}"
 
 
 rule lur_importance_figures:
