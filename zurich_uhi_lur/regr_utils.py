@@ -74,6 +74,99 @@ class SpearmanSFSSelector(feature_selection.SelectorMixin, sk_base.BaseEstimator
         return self.support_mask_
 
 
+def _vif_given(X, selected, candidate):
+    """Variance inflation factor of `candidate` regressed on the `selected` columns."""
+    if not selected:
+        return 1.0
+    # center so that the fit is equivalent to one with an intercept
+    a = X[:, selected] - X[:, selected].mean(axis=0)
+    b = X[:, candidate] - X[:, candidate].mean()
+    ss_tot = float(b @ b)
+    if ss_tot <= 0:
+        return np.inf
+    coef, *_ = np.linalg.lstsq(a, b, rcond=None)
+    resid = b - a @ coef
+    r2 = 1.0 - float(resid @ resid) / ss_tot
+    return np.inf if r2 >= 1 - 1e-12 else 1.0 / (1.0 - r2)
+
+
+class SpearmanVIFSelector(feature_selection.SelectorMixin, sk_base.BaseEstimator):
+    """Sequential forward selector: Spearman ordering + variance inflation admission.
+
+    Features are ranked by absolute Spearman correlation with ``y`` and added greedily.
+    A candidate is admitted only if its variance inflation factor against the already
+    selected features stays at or below ``vif_threshold``. A backward pass then prunes
+    the features that only became redundant once later candidates were admitted.
+
+    ACHTUNG: the sites carry the distinct predictor rows, since each site contributes
+    the same row at every time step. Once the retained set spans that row space, any
+    further candidate is an exact linear combination of it and its variance inflation
+    factor is infinite, which caps the selection at the rank of the site sample without
+    an explicit limit. For the same reason the pruning pass is skipped whenever the
+    number of distinct rows does not exceed the retained set: on the degenerate
+    four-station fit it would otherwise strip the selection below that rank.
+
+    Parameters
+    ----------
+    vif_threshold : float, default=5.0
+        Maximum tolerated variance inflation factor.
+
+    Attributes
+    ----------
+    support_mask_ : ndarray of shape (n_features,)
+        Boolean mask of selected features.
+    selected_features_ : ndarray of str
+        Names of the selected features.
+    spearman_values_ : ndarray of shape (n_features,)
+        Absolute Spearman correlation of each original feature with ``y``.
+    """
+
+    def __init__(self, vif_threshold=5.0):
+        self.vif_threshold = vif_threshold
+
+    def fit(self, X, y):
+        """Fit feature selector."""
+        X = validate_data(self, X, dtype="numeric")
+        y = np.asarray(y)
+
+        cols = (
+            list(self.feature_names_in_)
+            if hasattr(self, "feature_names_in_")
+            else [str(i) for i in range(X.shape[1])]
+        )
+
+        spearman_vals = np.array(
+            [abs(stats.spearmanr(X[:, i], y).statistic) for i in range(X.shape[1])]
+        )
+        spearman_vals = np.nan_to_num(spearman_vals, nan=0.0)
+
+        selected = []
+        for i in np.argsort(-spearman_vals):
+            if _vif_given(X, selected, i) <= self.vif_threshold:
+                selected.append(i)
+
+        if len(np.unique(X, axis=0)) > len(selected) + 1:
+            while len(selected) > 1:
+                vifs = [
+                    _vif_given(X, [j for j in selected if j != i], i) for i in selected
+                ]
+                worst = int(np.argmax(vifs))
+                if vifs[worst] <= self.vif_threshold:
+                    break
+                selected.pop(worst)
+
+        mask = np.zeros(X.shape[1], dtype=bool)
+        mask[selected] = True
+        self.support_mask_ = mask
+        self.selected_features_ = np.array([cols[i] for i in selected])
+        self.spearman_values_ = spearman_vals
+        return self
+
+    def _get_support_mask(self):
+        check_is_fitted(self, "support_mask_")
+        return self.support_mask_
+
+
 def score_pipeline(
     pipe,
     X,
