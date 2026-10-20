@@ -161,17 +161,27 @@ rule eda:
 
 
 rule land_data:
+    # ACHTUNG: retrieving and processing the swisstopo data (including the LiDAR-derived
+    # tree canopy) takes many hours and many GB of downloads, so the land data are
+    # archived and this rule only runs if they are missing. The study extent is hence a
+    # parameter rather than an input, since the pipeline regenerates it and any input
+    # regenerated upstream triggers a rerun; the notebook is `ancient` so that a fresh
+    # checkout does not trigger it, and the executed notebook is a log so that its
+    # absence does not either. To rebuild the land data, delete them once the extent
+    # exists (e.g., after `snakemake -j1 data/processed/zurich-lcs-extent.gpkg`).
     input:
-        extent=rules.lcs_spatial_extent.output.extent,
-        notebook=NOTEBOOKS_DIR / "land-data.ipynb",
+        notebook=ancient(NOTEBOOKS_DIR / "land-data.ipynb"),
     output:
         buildings=DATA_PROCESSED_DIR / "buildings.gpkg",
         dem=DATA_PROCESSED_DIR / "dem.tif",
         tree_canopy=DATA_PROCESSED_DIR / "tree-canopy.tif",
+    log:
         notebook=NOTEBOOKS_OUTPUT_DIR / "land-data.ipynb",
+    params:
+        extent=rules.lcs_spatial_extent.output.extent,
     shell:
-        "papermill {input.notebook} {output.notebook} "
-        "-p agglom_extent_filepath {input.extent} "
+        "papermill {input.notebook} {log.notebook} "
+        "-p agglom_extent_filepath {params.extent} "
         "-p working_dir {LAND_WORKING_DIR} "
         "-p dst_buildings_gdf_filepath {output.buildings} "
         "-p dst_dem_filepath {output.dem} "
