@@ -148,7 +148,7 @@ def score_pipeline(
         Permutations for Moran's I significance test.
     **rsa_kwargs
         Extra keyword arguments forwarded to
-        :func:`focalpy.diagnostics.moran_residuals` (e.g. ``seed``).
+        :func:`focalpy.diagnostics.moran_residuals` (e.g. ``rng``).
     importance_fn : callable, optional
         ``(fitted_pipe, X, selected_features) -> dict[str, float]``
         Model-specific feature importance extractor.

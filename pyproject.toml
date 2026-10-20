@@ -61,10 +61,10 @@ swisslandstats-geopy = ">=0.12.0,<0.13"
 xgboost = ">=3.2.0,<4"
 
 [tool.pixi.pypi-dependencies]
-esda = {path = "esda", editable = true}
-focalpy = {path = "focalpy", editable = true}
-# swisstopopy = ">=0.1.0,<0.2"
-swisstopopy = {path = "../../libraries/swisstopopy", editable = true}
+# esda with numpy-generator permutations in Moran (pysal/esda#448)
+esda = {git = "https://github.com/martibosch/esda.git", rev = "0084155158b5f86dd7b1fdae60d8ac5afcc0f264"}
+focalpy = {git = "https://github.com/martibosch/focalpy.git", rev = "bbf23d3080820443166e3f827f2c1c14731cacdd"}
+swisstopopy = "==0.4.0"
 zurich_uhi_lur = {path = ".", editable = true}
 
 [tool.pixi.workspace]

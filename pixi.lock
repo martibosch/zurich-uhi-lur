@@ -575,7 +575,9 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/zstd-1.5.7-hb78ec9c_6.conda
       - pypi: https://files.pythonhosted.org/packages/4d/86/bdecd0ed47a0416d2bb068ed97d51c198319e8a2675b5760887c3321207b/clustergram-0.8.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/b9/a1/de2d47272defaa383e8273ba74f57a736ff1adc2d081f99e0bf64453bd30/detectree-0.9.1-py3-none-any.whl
+      - pypi: git+https://github.com/martibosch/esda.git?rev=0084155158b5f86dd7b1fdae60d8ac5afcc0f264#0084155158b5f86dd7b1fdae60d8ac5afcc0f264
       - pypi: https://files.pythonhosted.org/packages/20/83/63da54032c0c03d4921b854111e33d3a1dadec5d2b7e741fba6c8c6486a6/fiona-1.10.1-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+      - pypi: git+https://github.com/martibosch/focalpy.git?rev=bbf23d3080820443166e3f827f2c1c14731cacdd#bbf23d3080820443166e3f827f2c1c14731cacdd
       - pypi: https://files.pythonhosted.org/packages/ab/8a/111ce1673baedc5669c40e9bc6e162daded9c2c490314abd32b824023a12/geoutils-0.2.5-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/04/4b/29cac41a4d98d144bf5f6d33995617b185d14b22401f75ca86f384e87ff1/h11-0.16.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/3c/4c/781267da3188db679e601de18112021a5cb16506fe86b246e22c5401a9c4/hf_xet-1.4.2-cp37-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
@@ -598,13 +600,11 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/d6/e5/4f4fc949e7eb8415a57091767969e1d314dcf06b74b85bbbf29991395af4/rioxarray-0.20.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a3/b8/0d8eeb5a9fd7d34ba84f8a55753a0a3e2b5b51b2a5a0ade648a8db4a62f7/scikit_image-0.26.0-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/43/f1/b392952200f3393bb06fbc4dd975fc63a6843261705839355560b7264eb2/simplejson-3.20.2-cp313-cp313-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+      - pypi: https://files.pythonhosted.org/packages/59/b2/66955254a2984b450b93e1abf3b46b160acdc5072d73f799200a2208d139/swisstopopy-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/1a/e4/e804505f87627cd8cdae9c010c47c4485fd8c1ce31a7dd0ab7fcc4707377/tifffile-2026.3.3-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/0c/8b/501ae07b584b08d492993b81026da391fe44c64fed1832c6863832b2984c/urban_footprinter-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/d5/04/61dda99e9760a806dedf337531245b8dcc9e6731eba720f89c8d132f3339/xdem-0.2.3-py3-none-any.whl
-      - pypi: ../../libraries/swisstopopy
       - pypi: ./
-      - pypi: ./esda
-      - pypi: ./focalpy
       osx-64:
       - conda: https://conda.anaconda.org/conda-forge/osx-64/_openmp_mutex-4.5-7_kmp_llvm.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/_python_abi3_support-1.0-hd8ed1ab_2.conda
@@ -1106,7 +1106,9 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-64/zstd-1.5.7-h3eecb57_6.conda
       - pypi: https://files.pythonhosted.org/packages/4d/86/bdecd0ed47a0416d2bb068ed97d51c198319e8a2675b5760887c3321207b/clustergram-0.8.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/b9/a1/de2d47272defaa383e8273ba74f57a736ff1adc2d081f99e0bf64453bd30/detectree-0.9.1-py3-none-any.whl
+      - pypi: git+https://github.com/martibosch/esda.git?rev=0084155158b5f86dd7b1fdae60d8ac5afcc0f264#0084155158b5f86dd7b1fdae60d8ac5afcc0f264
       - pypi: https://files.pythonhosted.org/packages/c5/e0/665ce969cab6339c19527318534236e5e4184ee03b38cd474497ebd22f4d/fiona-1.10.1-cp313-cp313-macosx_10_15_x86_64.whl
+      - pypi: git+https://github.com/martibosch/focalpy.git?rev=bbf23d3080820443166e3f827f2c1c14731cacdd#bbf23d3080820443166e3f827f2c1c14731cacdd
       - pypi: https://files.pythonhosted.org/packages/ab/8a/111ce1673baedc5669c40e9bc6e162daded9c2c490314abd32b824023a12/geoutils-0.2.5-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/04/4b/29cac41a4d98d144bf5f6d33995617b185d14b22401f75ca86f384e87ff1/h11-0.16.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/b4/86/b40b83a2ff03ef05c4478d2672b1fc2b9683ff870e2b25f4f3af240f2e7b/hf_xet-1.4.2-cp37-abi3-macosx_10_12_x86_64.whl
@@ -1129,13 +1131,11 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/d6/e5/4f4fc949e7eb8415a57091767969e1d314dcf06b74b85bbbf29991395af4/rioxarray-0.20.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/4f/48/02357ffb2cca35640f33f2cfe054a4d6d5d7a229b88880a64f1e45c11f4e/scikit_image-0.26.0-cp313-cp313-macosx_10_13_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/35/28/5a4b8f3483fbfb68f3f460bc002cef3a5735ef30950e7c4adce9c8da15c7/simplejson-3.20.2-cp313-cp313-macosx_10_13_x86_64.whl
+      - pypi: https://files.pythonhosted.org/packages/59/b2/66955254a2984b450b93e1abf3b46b160acdc5072d73f799200a2208d139/swisstopopy-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/1a/e4/e804505f87627cd8cdae9c010c47c4485fd8c1ce31a7dd0ab7fcc4707377/tifffile-2026.3.3-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/0c/8b/501ae07b584b08d492993b81026da391fe44c64fed1832c6863832b2984c/urban_footprinter-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/d5/04/61dda99e9760a806dedf337531245b8dcc9e6731eba720f89c8d132f3339/xdem-0.2.3-py3-none-any.whl
-      - pypi: ../../libraries/swisstopopy
       - pypi: ./
-      - pypi: ./esda
-      - pypi: ./focalpy
       osx-arm64:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/_openmp_mutex-4.5-7_kmp_llvm.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/_python_abi3_support-1.0-hd8ed1ab_2.conda
@@ -1637,7 +1637,9 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zstd-1.5.7-hbf9d68e_6.conda
       - pypi: https://files.pythonhosted.org/packages/4d/86/bdecd0ed47a0416d2bb068ed97d51c198319e8a2675b5760887c3321207b/clustergram-0.8.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/b9/a1/de2d47272defaa383e8273ba74f57a736ff1adc2d081f99e0bf64453bd30/detectree-0.9.1-py3-none-any.whl
+      - pypi: git+https://github.com/martibosch/esda.git?rev=0084155158b5f86dd7b1fdae60d8ac5afcc0f264#0084155158b5f86dd7b1fdae60d8ac5afcc0f264
       - pypi: https://files.pythonhosted.org/packages/23/c8/150094fbc4220d22217f480cc67b6ee4c2f4324b4b58cd25527cd5905937/fiona-1.10.1-cp313-cp313-macosx_11_0_arm64.whl
+      - pypi: git+https://github.com/martibosch/focalpy.git?rev=bbf23d3080820443166e3f827f2c1c14731cacdd#bbf23d3080820443166e3f827f2c1c14731cacdd
       - pypi: https://files.pythonhosted.org/packages/ab/8a/111ce1673baedc5669c40e9bc6e162daded9c2c490314abd32b824023a12/geoutils-0.2.5-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/04/4b/29cac41a4d98d144bf5f6d33995617b185d14b22401f75ca86f384e87ff1/h11-0.16.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/64/2e/af4475c32b4378b0e92a587adb1aa3ec53e3450fd3e5fe0372a874531c00/hf_xet-1.4.2-cp37-abi3-macosx_11_0_arm64.whl
@@ -1660,13 +1662,11 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/d6/e5/4f4fc949e7eb8415a57091767969e1d314dcf06b74b85bbbf29991395af4/rioxarray-0.20.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/67/b9/b792c577cea2c1e94cda83b135a656924fc57c428e8a6d302cd69aac1b60/scikit_image-0.26.0-cp313-cp313-macosx_11_0_arm64.whl
       - pypi: https://files.pythonhosted.org/packages/7a/4d/30dfef83b9ac48afae1cf1ab19c2867e27b8d22b5d9f8ca7ce5a0a157d8c/simplejson-3.20.2-cp313-cp313-macosx_11_0_arm64.whl
+      - pypi: https://files.pythonhosted.org/packages/59/b2/66955254a2984b450b93e1abf3b46b160acdc5072d73f799200a2208d139/swisstopopy-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/1a/e4/e804505f87627cd8cdae9c010c47c4485fd8c1ce31a7dd0ab7fcc4707377/tifffile-2026.3.3-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/0c/8b/501ae07b584b08d492993b81026da391fe44c64fed1832c6863832b2984c/urban_footprinter-0.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/d5/04/61dda99e9760a806dedf337531245b8dcc9e6731eba720f89c8d132f3339/xdem-0.2.3-py3-none-any.whl
-      - pypi: ../../libraries/swisstopopy
       - pypi: ./
-      - pypi: ./esda
-      - pypi: ./focalpy
 packages:
 - conda: https://conda.anaconda.org/conda-forge/linux-64/_openmp_mutex-4.5-20_gnu.conda
   build_number: 20
@@ -4658,39 +4658,45 @@ packages:
   - pkg:pypi/entrypoints?source=hash-mapping
   size: 11259
   timestamp: 1733327239578
-- pypi: ./esda
+- pypi: git+https://github.com/martibosch/esda.git?rev=0084155158b5f86dd7b1fdae60d8ac5afcc0f264#0084155158b5f86dd7b1fdae60d8ac5afcc0f264
   name: esda
-  version: 2.9.1.dev4+ga743d2129.d20260418
-  sha256: c00a6a6036ce8beda0acc0c81298be3db17ed00ca15a3b3d612b3ccafc890c4b
+  version: 0.1.dev1468+g008415515
   requires_dist:
-  - geopandas>=0.14
+  - geopandas>=1.0
   - libpysal>=4.12
-  - numpy>=1.26
-  - pandas>=2.1
-  - scikit-learn>=1.4
-  - scipy>=1.12
+  - numpy>=2.1
+  - pandas>=2.3
+  - scikit-learn>=1.6
+  - scipy>=1.14
   - shapely>=2.1
-  - matplotlib>=3.8 ; extra == 'plus'
-  - numba>=0.58 ; extra == 'plus'
-  - rtree>=1.1 ; extra == 'plus'
-  - seaborn>=0.12 ; extra == 'plus'
+  - matplotlib>=3.10 ; extra == 'plus'
+  - numba>=0.61 ; extra == 'plus'
+  - rtree>=1.3 ; extra == 'plus'
+  - seaborn>=0.13 ; extra == 'plus'
   - codecov ; extra == 'tests'
-  - folium>=0.15 ; extra == 'tests'
-  - mapclassify>=2.6 ; extra == 'tests'
+  - folium>=0.17 ; extra == 'tests'
+  - geodatasets ; extra == 'tests'
+  - mapclassify>=2.7 ; extra == 'tests'
   - pytest ; extra == 'tests'
   - pytest-cov ; extra == 'tests'
+  - pytest-doctestplus ; extra == 'tests'
   - pytest-xdist ; extra == 'tests'
   - ruff ; extra == 'dev'
   - pre-commit ; extra == 'dev'
+  - mkdocs-jupyter ; extra == 'docs'
+  - myst-nb ; extra == 'docs'
+  - myst-parser ; extra == 'docs'
   - nbsphinx ; extra == 'docs'
   - numpydoc ; extra == 'docs'
   - pandoc ; extra == 'docs'
-  - sphinx ; extra == 'docs'
+  - sphinx>8,<9 ; extra == 'docs'
   - sphinxcontrib-bibtex ; extra == 'docs'
   - sphinx-bootstrap-theme ; extra == 'docs'
+  - sphinx-copybutton ; extra == 'docs'
+  - sphinx-immaterial ; extra == 'docs'
   - matplotlib-scalebar ; extra == 'notebooks'
   - watermark ; extra == 'notebooks'
-  requires_python: '>=3.11'
+  requires_python: '>=3.12'
 - conda: https://conda.anaconda.org/conda-forge/noarch/exceptiongroup-1.3.1-pyhd8ed1ab_0.conda
   sha256: ee6cf346d017d954255bbcbdb424cddea4d14e4ed7e9813e429db1d795d01144
   md5: 8e662bd460bda79b1ea39194e3c4c9ab
@@ -4919,10 +4925,9 @@ packages:
   purls: []
   size: 180970
   timestamp: 1767681372955
-- pypi: ./focalpy
+- pypi: git+https://github.com/martibosch/focalpy.git?rev=bbf23d3080820443166e3f827f2c1c14731cacdd#bbf23d3080820443166e3f827f2c1c14731cacdd
   name: focalpy
   version: 0.1.0
-  sha256: 5e0d4106dfc7083f77b9d9e8f4658e7f0b4add4333ba4e190e6423bde48d195b
   requires_dist:
   - esda
   - geopandas>=1.0.0
@@ -16847,10 +16852,10 @@ packages:
   - pkg:pypi/swisslandstats-geopy?source=hash-mapping
   size: 31183
   timestamp: 1737968049817
-- pypi: ../../libraries/swisstopopy
+- pypi: https://files.pythonhosted.org/packages/59/b2/66955254a2984b450b93e1abf3b46b160acdc5072d73f799200a2208d139/swisstopopy-0.4.0-py3-none-any.whl
   name: swisstopopy
   version: 0.4.0
-  sha256: 4f19c7e13032f3c44da368ed80334e002dd3ac5fbaff2b146da4f777390cdf64
+  sha256: 9acfb45497d1fd418403226364f582b85f5bb4ebe0ef92d9b9cc97731d10a68a
   requires_dist:
   - geopandas>=1.0.0
   - numpy>=2.0.0
@@ -16872,7 +16877,6 @@ packages:
   - setuptools ; extra == 'doc'
   - sphinx ; extra == 'doc'
   - sphinxemoji ; extra == 'doc'
-  - detectree ; extra == 'detectree'
   - pdal ; extra == 'pdal'
   - coverage[toml] ; extra == 'test'
   - pytest ; extra == 'test'
@@ -18722,7 +18726,7 @@ packages:
 - pypi: ./
   name: zurich-uhi-lur
   version: 0.1.0
-  sha256: e01133796c7705d745e6862e5c5729ecf3b13c3bcd60af8602003ce1c7ac0607
+  sha256: a48131b9b80638652701f157e04d43e39265e1027a5d17fc2d9085c6d49cebbe
   requires_dist:
   - detectree>=0.9.1,<0.10
   - urban-footprinter>=0.4.0,<0.5
