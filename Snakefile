@@ -194,9 +194,14 @@ rule _compute_land_features:
     output:
         features=DATA_PROCESSED_DIR / "{sites}-features.csv",
         notebook=NOTEBOOKS_OUTPUT_DIR / "land-features-{sites}.ipynb",
+    params:
+        # the grid has ~16k sites against ~115 stations, and the default batch of 500
+        # exhausts memory when the buffers are cut from the 558 MB DEM
+        chunk_size=lambda wc: 100 if wc.sites == "grid" else 500,
     shell:
         "papermill {input.notebook} {output.notebook} "
         "-p agglom_extent_filepath {input.extent} "
+        "-p chunk_size {params.chunk_size} "
         "-p sites_gdf_filepath {input.sites} "
         "-p buildings_gdf_filepath {input.buildings} "
         "-p tree_canopy_filepath {input.tree_canopy} "
