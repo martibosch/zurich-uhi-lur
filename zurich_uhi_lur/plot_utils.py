@@ -1,6 +1,6 @@
 """Plotting utils."""
 
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 
 import contextily as cx
 import geopandas as gpd
@@ -12,6 +12,73 @@ import seaborn as sns
 
 # for type annotations
 KwargsType = Mapping | None
+
+# ACHTUNG: the article figures are drawn at the size at which the article prints them,
+# so that LaTeX applies no scaling when including them and the font sizes below are the
+# printed ones. The widths follow the geometry of `reports/article.tex`: the text block,
+# and the text block widened into the left margin by `adjustwidth{-.4\textwidth}`
+TEXT_WIDTH = 5.25  # in
+WIDE_TEXT_WIDTH = 1.4 * TEXT_WIDTH  # in
+# sub-figures whose (a)/(b) label sits beside the panel reserve a 1.5em box for it,
+# i.e., 15 pt at the article's 10 pt font size
+SUBFIGURE_LABEL_WIDTH = 15 / 72.27  # in
+
+# printed font sizes, within the 8-12 pt range that PLOS asks for text in figures
+FONT_SIZE = 9  # pt, axis labels and titles
+SMALL_FONT_SIZE = 8  # pt, tick labels, legends and annotations
+
+STYLE_RC = {
+    "font.size": FONT_SIZE,
+    "axes.labelsize": FONT_SIZE,
+    "axes.titlesize": FONT_SIZE,
+    "figure.titlesize": FONT_SIZE,
+    "xtick.labelsize": SMALL_FONT_SIZE,
+    "ytick.labelsize": SMALL_FONT_SIZE,
+    "legend.fontsize": SMALL_FONT_SIZE,
+    "legend.title_fontsize": FONT_SIZE,
+    "axes.linewidth": 0.8,
+    "lines.linewidth": 1.2,
+    "lines.markersize": 4,
+    "xtick.major.width": 0.8,
+    "ytick.major.width": 0.8,
+    "xtick.major.size": 3,
+    "ytick.major.size": 3,
+    "xtick.minor.width": 0.6,
+    "ytick.minor.width": 0.6,
+    # all four spines are kept (seaborn's "ticks" style), i.e., no despining
+    "axes.spines.top": True,
+    "axes.spines.right": True,
+    "savefig.dpi": 300,
+    # embed TrueType fonts so that the text of the PDF figures stays editable
+    "pdf.fonttype": 42,
+}
+
+
+def set_style() -> None:
+    """Apply the article figure style to all subsequent figures.
+
+    Sets the seaborn "ticks" style, which keeps all four spines, with the font sizes and
+    line widths of `STYLE_RC`. Figures drawn at their printed width (`TEXT_WIDTH` or
+    `WIDE_TEXT_WIDTH`, or a fraction thereof for sub-figures) then print with the same
+    text size across the article.
+    """
+    sns.set_theme(style="ticks", rc=STYLE_RC)
+
+
+def label_panels(axes: Iterable[mpl.axes.Axes]) -> None:
+    """Label each panel with a letter in parentheses at its top left.
+
+    The letters are set as left-aligned axes titles, so that the constrained layout
+    reserves space for them, and they match the "(a)", "(b)"... sub-figure references
+    of the article captions.
+
+    Parameters
+    ----------
+    axes : iterable of matplotlib.axes.Axes
+        Axes to label, in the order of the letters.
+    """
+    for i, ax in enumerate(axes):
+        ax.set_title(f"({chr(ord('a') + i)})", loc="left", fontsize=FONT_SIZE)
 
 
 def comparison_lineplot(
@@ -322,17 +389,11 @@ def compare_maps(
     if legend:
         # add colorbar
         sm = plt.cm.ScalarMappable(cmap=cmap, norm=plt.Normalize(vmin=vmin, vmax=vmax))
-        # cbar = fig.colorbar(
-        #     sm,
-        #     ax=ax_row,
-        #     location="right",
-        #     orientation="vertical",
-        #     label="T$_{mean}$ ($^{\circ}$C)",
-        #     pad=0.025,
-        #     shrink=0.5,
-        # )
-        cbar_ax = fig.add_axes([1.015, 0.25, 0.01, 0.5])
-        _ = fig.colorbar(sm, cax=cbar_ax, orientation="vertical")
-        cbar_ax.set_ylabel(var_label)
+        # the colorbar is laid out by the constrained layout, so the figure keeps its
+        # size when saved rather than relying on `bbox_inches="tight"` to reach a
+        # colorbar placed outside of it
+        _ = fig.colorbar(
+            sm, ax=axes, location="right", shrink=0.6, pad=0.02, label=var_label
+        )
 
     return fig
