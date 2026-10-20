@@ -67,13 +67,32 @@ rule aws_data:
         "-p dst_stations_gdf_filepath {output.stations_gdf}"
 
 
+rule awel_data:
+    # ACHTUNG: AWEL periodically revises its published files, so the series is cached as
+    # a raw input at retrieval time. The archived snapshot is the one used in the article:
+    # since the rule has no inputs, it only runs if the snapshot is missing (or when
+    # forced with `-R awel_data`), and a re-download may differ from it.
+    output:
+        ts_df=DATA_RAW_DIR / "awel-ts-df.csv",
+        stations_gdf=DATA_RAW_DIR / "awel-stations.gpkg",
+    shell:
+        "python scripts/cache_awel_data.py "
+        "--dst-ts-df-filepath {output.ts_df} "
+        "--dst-stations-gdf-filepath {output.stations_gdf}"
+
+
 rule lcs_data:
     input:
+        # the agglomeration extent is a raw input here: the LCS-derived extent does not
+        # exist yet at this point of the workflow
+        extent=DATA_RAW_DIR / "zurich-extent.gpkg",
         aws_ts_df=rules.aws_data.output.ts_df,
         ugz_stations=DATA_RAW_DIR
         / "ugz_stadtklima_zuerich_messorte_messnetz_meteoblue.csv",
         ugz_ts_parquet=DATA_RAW_DIR
         / "ugz_stadtklima_zuerich_temperaturmessungen_messnetz_meteoblue_2019-aktuell.parquet",
+        awel_ts_df=rules.awel_data.output.ts_df,
+        awel_stations=rules.awel_data.output.stations_gdf,
         notebook=NOTEBOOKS_DIR / "lcs-data.ipynb",
     output:
         ts_df=DATA_INTERIM_DIR / "lcs-ts-df.csv",
@@ -81,9 +100,12 @@ rule lcs_data:
         notebook=NOTEBOOKS_OUTPUT_DIR / "lcs-data.ipynb",
     shell:
         "papermill {input.notebook} {output.notebook} "
+        "-p agglom_extent_filepath {input.extent} "
         "-p aws_ts_df_filepath {input.aws_ts_df} "
         "-p ugz_stations_filepath {input.ugz_stations} "
         "-p ugz_ts_parquet_filepath {input.ugz_ts_parquet} "
+        "-p awel_ts_df_filepath {input.awel_ts_df} "
+        "-p awel_stations_filepath {input.awel_stations} "
         "-p dst_ts_df_filepath {output.ts_df} "
         "-p dst_stations_gdf_filepath {output.stations_gdf}"
 
