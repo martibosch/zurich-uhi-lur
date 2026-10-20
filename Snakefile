@@ -36,23 +36,15 @@ rule all:
             str(DATA_PROCESSED_DIR / "{sites}-features.csv"),
             sites=["stations", "grid"],
         ),
-        expand(
-            str(FIGURES_DIR / "lur-importance-{model}.pdf"),
-            model=["MLR", "GAM", "RF"],
-        ),
-        expand(
-            str(FIGURES_DIR / "lur-importance-single-{model}.pdf"),
-            model=["MLR", "GAM", "RF"],
-        ),
         FIGURES_DIR / "lur-importance-heatmap.pdf",
         FIGURES_DIR / "lur-importance-headline.pdf",
         FIGURES_DIR / "lur-scores-performance.pdf",
-        FIGURES_DIR / "lur-scores-rsa.pdf",
         FIGURES_DIR / "lur-rsa.pdf",
         FIGURES_DIR / "lur-maps.png",
         FIGURES_DIR / "lur-pca.pdf",
         FIGURES_DIR / "lur-pca-loadings.pdf",
         FIGURES_DIR / "t-ts.pdf",
+        FIGURES_DIR / "lur-pred-spread.pdf",
         FIGURES_DIR / "station-t-mean-maps.png",
         FIGURES_DIR / "station-t-t-mean-maps.png",
 
@@ -231,8 +223,8 @@ rule land_use_regression:
         importance=DATA_PROCESSED_DIR / "lur-importance.csv",
         obs_pred=DATA_PROCESSED_DIR / "lur-obs-pred.csv",
         shap=DATA_PROCESSED_DIR / "lur-shap.csv",
-        baseline_moran=DATA_PROCESSED_DIR / "baseline-moran.json",
         grid_pred=DATA_PROCESSED_DIR / "lur-grid-pred.nc",
+        grid_pred_pct=DATA_PROCESSED_DIR / "lur-grid-pred-pct.csv",
         notebook=NOTEBOOKS_OUTPUT_DIR / "lur-model.ipynb",
     shell:
         "papermill {input.notebook} {output.notebook} "
@@ -245,8 +237,8 @@ rule land_use_regression:
         "-p dst_importance_filepath {output.importance} "
         "-p dst_obs_pred_filepath {output.obs_pred} "
         "-p dst_shap_filepath {output.shap} "
-        "-p dst_baseline_moran_filepath {output.baseline_moran} "
-        "-p dst_grid_pred_filepath {output.grid_pred}"
+        "-p dst_grid_pred_filepath {output.grid_pred} "
+        "-p dst_grid_pred_pct_filepath {output.grid_pred_pct}"
 
 
 rule lur_results:
@@ -260,22 +252,16 @@ rule lur_results:
         importance=rules.land_use_regression.output.importance,
         obs_pred_data=rules.land_use_regression.output.obs_pred,
         shap=rules.land_use_regression.output.shap,
-        baseline_moran=rules.land_use_regression.output.baseline_moran,
         grid_pred=rules.land_use_regression.output.grid_pred,
+        grid_pred_pct=rules.land_use_regression.output.grid_pred_pct,
         notebook=NOTEBOOKS_DIR / "lur-results.ipynb",
     output:
         scores_performance_fig=FIGURES_DIR / "lur-scores-performance.pdf",
-        scores_rsa_fig=FIGURES_DIR / "lur-scores-rsa.pdf",
         rsa_fig=FIGURES_DIR / "lur-rsa.pdf",
-        importance_mlr=FIGURES_DIR / "lur-importance-MLR.pdf",
-        importance_gam=FIGURES_DIR / "lur-importance-GAM.pdf",
-        importance_rf=FIGURES_DIR / "lur-importance-RF.pdf",
-        importance_single_mlr=FIGURES_DIR / "lur-importance-single-MLR.pdf",
-        importance_single_gam=FIGURES_DIR / "lur-importance-single-GAM.pdf",
-        importance_single_rf=FIGURES_DIR / "lur-importance-single-RF.pdf",
         maps_fig=FIGURES_DIR / "lur-maps.png",
         pca_fig=FIGURES_DIR / "lur-pca.pdf",
         pca_loadings_fig=FIGURES_DIR / "lur-pca-loadings.pdf",
+        pred_spread_fig=FIGURES_DIR / "lur-pred-spread.pdf",
         notebook=NOTEBOOKS_OUTPUT_DIR / "lur-results.ipynb",
     shell:
         "papermill {input.notebook} {output.notebook} "
@@ -288,15 +274,14 @@ rule lur_results:
         "-p dst_importance_filepath {input.importance} "
         "-p obs_pred_data_filepath {input.obs_pred_data} "
         "-p dst_shap_filepath {input.shap} "
-        "-p dst_baseline_moran_filepath {input.baseline_moran} "
         "-p grid_pred_filepath {input.grid_pred} "
+        "-p grid_pred_pct_filepath {input.grid_pred_pct} "
         "-p dst_scores_performance_filepath {output.scores_performance_fig} "
-        "-p dst_scores_rsa_filepath {output.scores_rsa_fig} "
         "-p dst_rsa_filepath {output.rsa_fig} "
-        "-p dst_importance_fig_prefix {FIGURES_DIR}/lur-importance "
         "-p dst_maps_filepath {output.maps_fig} "
         "-p dst_pca_filepath {output.pca_fig} "
         "-p dst_pca_loadings_filepath {output.pca_loadings_fig} "
+        "-p dst_pred_spread_filepath {output.pred_spread_fig} "
 
 
 rule lur_importance_figures:
