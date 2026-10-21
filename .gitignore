@@ -105,10 +105,10 @@ ENV/
 !.pixi/config.toml
 /.agent-shell/
 
-# paper, executed notebooks and local caches
+# paper and local caches (the executed notebooks in `notebooks/output` are committed at
+# each release, so that they can be browsed on GitHub)
 reports/
 cache/
-notebooks/output/
 notebooks/cache/
 models/
 *.sqlite
